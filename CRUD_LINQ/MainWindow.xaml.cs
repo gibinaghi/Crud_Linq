@@ -34,28 +34,65 @@ namespace CRUD_LINQ
 
             dataContext = new DataClasses1DataContext(miConexion);
 
-            //llamo al método InsertarEmpresas para ejecutar
-            InsertaEmpresas();
+            //llamo al método para ejecutar
+            //InsertaEmpresas();
+            InsertaEmpleados();
 
         }
 
 
         public void InsertaEmpresas()
         {
-            //creo la instancia
+
+            //borro todas los datos de la tabla empresa
+            //dataContext.ExecuteCommand("delete from Empresa");
+
+            //creo la instancia de la Empresa 1
             Empresa pildorasInformaticas = new Empresa();
 
             //establezco la propiedad del objeto
-            pildorasInformaticas.Nombre = "PildorasInformáticas";
+            pildorasInformaticas.Nombre = "Pildoras Informáticas";
 
             //usando el mapeo dataContext, que en la tabla Empresa inserte el objeto
             dataContext.Empresa.InsertOnSubmit(pildorasInformaticas);
+
+            //Agrego Empresa 2
+            Empresa empresaGoogle = new Empresa();
+            empresaGoogle.Nombre = "Google";
+            dataContext.Empresa.InsertOnSubmit(empresaGoogle);
+
 
             //dataContext toma efecto, actualiza los cambios
             dataContext.SubmitChanges(); 
 
             //muestro el registro en el dataGrid de la aplicación gráfica
             Principal.ItemsSource = dataContext.Empresa;
+
+        }
+
+
+        public void InsertaEmpleados()
+        {
+
+            //creo objeto de tipo Empresa xq las tablas están relacionadas con el IdEmpresa
+            Empresa pildorasInformaticas = dataContext.Empresa.First(em => em.Nombre.Equals("Pildoras Informáticas"));
+            Empresa empresaGoogle = dataContext.Empresa.First(em => em.Nombre.Equals("Google"));
+
+            //creo lista de empleados
+            List<Empleado> listaEmpleados = new List<Empleado>();
+
+            //agrego empleados a la lista
+            listaEmpleados.Add(new Empleado { Nombre="Juan", Apellido="Diaz", EmpresaId=pildorasInformaticas.Id });
+            listaEmpleados.Add(new Empleado { Nombre = "Ana", Apellido = "Martin", EmpresaId = empresaGoogle.Id });
+            listaEmpleados.Add(new Empleado { Nombre = "Gimena", Apellido = "Binaghi", EmpresaId = empresaGoogle.Id });
+            listaEmpleados.Add(new Empleado { Nombre = "Pablo", Apellido = "Broggi", EmpresaId = pildorasInformaticas.Id });
+
+            //inserto los empleados 
+            dataContext.Empleado.InsertAllOnSubmit(listaEmpleados);
+
+            dataContext.SubmitChanges();
+
+            Principal.ItemsSource = dataContext.Empleado;
 
         }
 

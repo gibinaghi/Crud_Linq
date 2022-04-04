@@ -36,9 +36,13 @@ namespace CRUD_LINQ
 
             //llamo al método para ejecutar
             //InsertaEmpresas();
-            InsertaEmpleados();
+            //InsertaEmpleados();
+            //InsertaCargos();
+            //InsertaEmpleadoCargo();
+            //ActualizaEmpleado();
+            EliminaEmpleado();
 
-        }
+        } 
 
 
         public void InsertaEmpresas()
@@ -96,5 +100,94 @@ namespace CRUD_LINQ
 
         }
 
+
+        public void InsertaCargos()
+        {
+            //dataContext.ExecuteCommand("delete from Cargo");
+
+            //inserto los cargos
+            dataContext.Cargo.InsertOnSubmit(new Cargo { NombreCargo = "Director/a" });
+            dataContext.Cargo.InsertOnSubmit(new Cargo { NombreCargo = "Administrativo/a" });
+
+            dataContext.SubmitChanges();
+
+            Principal.ItemsSource = dataContext.Cargo;
+        }
+
+
+        public void InsertaEmpleadoCargo()
+        {
+            /*// forma 1
+            Empleado Juan = dataContext.Empleado.First(em => em.Nombre.Equals("Juan"));
+            Empleado Ana = dataContext.Empleado.First(em => em.Nombre.Equals("Ana"));
+
+            Cargo cDirector = dataContext.Cargo.First(cg => cg.NombreCargo.Equals("Director/a"));
+            Cargo cAdtvo = dataContext.Cargo.First(cg => cg.NombreCargo.Equals("Administrativo/a"));
+
+            CargoEmpleado cargoJuan = new CargoEmpleado();
+
+            //relaciono las tabla Empleado y Cargo
+            cargoJuan.Empleado = Juan;
+            cargoJuan.CargoId = cDirector.Id;
+
+            cargoJuan.Empleado = Ana;
+            cargoJuan.CargoId = cAdtvo.Id;*/
+
+
+            /* //forma 2
+             //insertar Empleados y Cragos a una lista sabiendo los id de empleados y cargos
+             List<CargoEmpleado> listaCargosEmpleados = new List<CargoEmpleado>();
+             listaCargosEmpleados.Add(new CargoEmpleado { CargoId = 5, EmpleadoId = 1 });
+             listaCargosEmpleados.Add(new CargoEmpleado { CargoId = 6, EmpleadoId = 2 });
+             listaCargosEmpleados.Add(new CargoEmpleado { CargoId = 5, EmpleadoId = 3 });
+
+             dataContext.CargoEmpleado.DeleteAllOnSubmit(listaCargosEmpleados);*/
+
+            //forma 3
+            Empleado Juan = dataContext.Empleado.First(em => em.Nombre.Equals("Juan"));
+            Empleado Ana = dataContext.Empleado.First(em => em.Nombre.Equals("Ana"));
+            Empleado Gimena = dataContext.Empleado.First(em => em.Nombre.Equals("Gimena"));
+            Empleado Pablo = dataContext.Empleado.First(em => em.Nombre.Equals("Pablo"));
+
+            Cargo cDirector = dataContext.Cargo.First(cg => cg.NombreCargo.Equals("Director/a"));
+            Cargo cAdtvo = dataContext.Cargo.First(cg => cg.NombreCargo.Equals("Administrativo/a"));
+
+            List<CargoEmpleado> listaCargosEmpleados = new List<CargoEmpleado>();
+            listaCargosEmpleados.Add(new CargoEmpleado { Empleado = Juan, Cargo = cDirector });
+            listaCargosEmpleados.Add(new CargoEmpleado { Empleado=Ana, Cargo=cDirector });
+            listaCargosEmpleados.Add(new CargoEmpleado { Empleado = Gimena, Cargo = cAdtvo });
+            listaCargosEmpleados.Add(new CargoEmpleado { Empleado = Pablo, Cargo = cDirector });
+
+            dataContext.SubmitChanges();
+
+            Principal.ItemsSource = dataContext.CargoEmpleado;
+        }
+
+
+        public void ActualizaEmpleado()
+        {
+
+            Empleado Juan = dataContext.Empleado.First(em => em.Nombre.Equals("Juan"));
+            Juan.Nombre = "Juan Pedro";
+
+            dataContext.SubmitChanges();
+
+            Principal.ItemsSource = dataContext.Empleado;
+        }
+
+
+        public void EliminaEmpleado()
+        {
+
+            Empleado Gimena = dataContext.Empleado.First(em => em.Nombre.Equals("Gimena"));
+
+            dataContext.Empleado.DeleteOnSubmit(Gimena);
+
+            dataContext.SubmitChanges();
+
+            Principal.ItemsSource = dataContext.Empleado;
+        }
+
+    
     }
 }
